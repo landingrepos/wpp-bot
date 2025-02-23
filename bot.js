@@ -46,7 +46,10 @@ client.on("ready", () => {
     console.log("✅ Bot de WhatsApp conectado y listo.");
 });
 
+
 client.on("message", async msg => {
+    console.log(`📩 Nuevo mensaje recibido: ${msg.body}`);
+    
     if (msg.body.toLowerCase() === "hola") {
         msg.reply("👋 ¡Hola! Soy un bot de pruebas en Railway.");
     }
