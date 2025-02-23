@@ -11,34 +11,23 @@ let lastQR = ""; // Almacena el último QR generado
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox"
-        ],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
         headless: true
     }
 });
 
-// Evento cuando se genera el QR
+// 📌 Evento cuando se genera el QR
 client.on("qr", qr => {
     lastQR = qr;
     console.log("🚀 Escanea este QR con tu WhatsApp:");
     qrcode.generate(qr, { small: false });
 });
 
-app.get("/", (req, res) => {
-    res.send("✅ Servidor Express corriendo correctamente.");
-});
-
-
 // 🔥 Servir el QR en una página web
 app.get("/qr", (req, res) => {
     if (!lastQR) {
         return res.send("<h2>QR no disponible. Espera un momento...</h2>");
     }
-
-    // Opción de depuración: mostrar el QR en texto
-    console.log("✅ QR Generado:", lastQR);
 
     // Generar código QR con API externa
     const qrImageURL = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(lastQR)}`;
@@ -62,8 +51,12 @@ app.get("/qr", (req, res) => {
     `);
 });
 
-// Iniciar el servidor en Railway
+// 📌 Iniciar el servidor en Railway
 const PORT = process.env.PORT || 8080;
+
+app.get("/", (req, res) => {
+    res.send("✅ Servidor Express corriendo correctamente.");
+});
 
 app.listen(PORT, () => {
     console.log(`✅ Servidor Express corriendo en: http://localhost:${PORT}/`);
@@ -71,8 +64,7 @@ app.listen(PORT, () => {
     console.error("❌ Error al iniciar Express:", err);
 });
 
-
-// Evento cuando el bot se conecta
+// 📌 Evento cuando el bot se conecta
 client.on("ready", async () => {
     console.log("✅ Bot de WhatsApp conectado y listo.");
 
@@ -92,18 +84,21 @@ client.on("ready", async () => {
     }
 });
 
-// Evento cuando el bot recibe un mensaje
+// 📩 Evento cuando el bot recibe un mensaje y siempre responde con "Mensaje recibido"
 client.on("message", async msg => {
     console.log("📩 Nuevo mensaje recibido:");
     console.log(`🆔 Remitente: ${msg.from}`);
     console.log(`💬 Mensaje: ${msg.body}`);
     console.log(`👥 Tipo de chat: ${msg.isGroupMsg ? "Grupo" : "Privado"}`);
 
-    if (msg.body.toLowerCase() === "hola") {
-        msg.reply("👋 ¡Hola! Ahora sí estoy detectando mensajes.");
+    // 🔥 El bot SIEMPRE responde "Mensaje recibido"
+    try {
+        await msg.reply("📩 Mensaje recibido.");
+        console.log("✅ Respuesta enviada.");
+    } catch (error) {
+        console.error("❌ Error al responder:", error);
     }
 });
-
 
 // Inicializar el bot
 client.initialize();
