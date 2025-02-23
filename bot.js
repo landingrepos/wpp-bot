@@ -26,6 +26,11 @@ client.on("qr", qr => {
     qrcode.generate(qr, { small: false });
 });
 
+app.get("/", (req, res) => {
+    res.send("✅ Servidor Express corriendo correctamente.");
+});
+
+
 // 🔥 Servir el QR en una página web
 app.get("/qr", (req, res) => {
     if (!lastQR) {
