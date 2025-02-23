@@ -94,14 +94,16 @@ client.on("ready", async () => {
 
 // Evento cuando el bot recibe un mensaje
 client.on("message", async msg => {
-    if (msg.from !== OWNER) return; // Ignorar mensajes que no sean tuyos
+    console.log("📩 Nuevo mensaje recibido:");
+    console.log(`🆔 Remitente: ${msg.from}`);
+    console.log(`💬 Mensaje: ${msg.body}`);
+    console.log(`👥 Tipo de chat: ${msg.isGroupMsg ? "Grupo" : "Privado"}`);
 
-    console.log(`📩 Nuevo mensaje de ${msg.from}: ${msg.body}`);
-    
     if (msg.body.toLowerCase() === "hola") {
-        msg.reply("👋 ¡Hola! Soy un bot de pruebas en Railway.");
+        msg.reply("👋 ¡Hola! Ahora sí estoy detectando mensajes.");
     }
 });
+
 
 // Inicializar el bot
 client.initialize();
