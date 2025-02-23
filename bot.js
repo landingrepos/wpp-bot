@@ -68,15 +68,11 @@ app.listen(PORT, () => {
 client.on("ready", async () => {
     console.log("✅ Bot de WhatsApp conectado y listo.");
 
-    if (!OWNER) {
-        console.error("❌ No se encontró la variable de entorno BOT_OWNER.");
-        return;
-    }
-
-    const message = "👋 ¡Hola! Soy tu bot de pruebas en Railway. Ya estoy conectado.";
+    const chatId = OWNER; 
+    const message = "✅ El bot está en línea. Responde a este mensaje para probar.";
 
     try {
-        const chat = await client.getChatById(OWNER);
+        const chat = await client.getChatById(chatId);
         await chat.sendMessage(message);
         console.log("✅ Mensaje de prueba enviado.");
     } catch (error) {
@@ -84,21 +80,26 @@ client.on("ready", async () => {
     }
 });
 
+
 // 📩 Evento cuando el bot recibe un mensaje y siempre responde con "Mensaje recibido"
 client.on("message", async msg => {
+    if (msg.from === "status@broadcast") return; // ❌ Ignorar mensajes de estados de WhatsApp
+    if (msg.from !== OWNER) return; // ❌ Ignorar mensajes que no sean de tu número
+
     console.log("📩 Nuevo mensaje recibido:");
     console.log(`🆔 Remitente: ${msg.from}`);
     console.log(`💬 Mensaje: ${msg.body}`);
     console.log(`👥 Tipo de chat: ${msg.isGroupMsg ? "Grupo" : "Privado"}`);
 
-    // 🔥 El bot SIEMPRE responde "Mensaje recibido"
     try {
-        await msg.reply("📩 Mensaje recibido.");
+        const chat = await msg.getChat();
+        await chat.sendMessage("📩 Mensaje recibido.");
         console.log("✅ Respuesta enviada.");
     } catch (error) {
         console.error("❌ Error al responder:", error);
     }
 });
+
 
 // Inicializar el bot
 client.initialize();
