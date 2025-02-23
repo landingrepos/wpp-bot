@@ -63,9 +63,14 @@ app.get("/qr", (req, res) => {
 });
 
 // Iniciar el servidor en Railway
-const PORT = process.env.PORT || 8080; // Railway usa puertos dinámicos
+const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => console.log(`🌍 QR disponible en: http://localhost:${PORT}/qr`));
+app.listen(PORT, () => {
+    console.log(`✅ Servidor Express corriendo en: http://localhost:${PORT}/`);
+}).on("error", (err) => {
+    console.error("❌ Error al iniciar Express:", err);
+});
+
 
 // Evento cuando el bot se conecta
 client.on("ready", async () => {
