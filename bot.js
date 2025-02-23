@@ -42,9 +42,22 @@ app.get("/qr", (req, res) => {
 
 app.listen(3000, () => console.log("🌍 Abre Railway en /qr para ver el código QR"));
 
-client.on("ready", () => {
+client.on("ready", async () => {
     console.log("✅ Bot de WhatsApp conectado y listo.");
+
+    // Número en formato internacional sin "+" ni espacios
+    const chatId = "59891398664@c.us";
+    const message = "👋 ¡Hola! Soy tu bot de pruebas en Railway. Ya estoy conectado.";
+
+    try {
+        const chat = await client.getChatById(chatId);
+        await chat.sendMessage(message);
+        console.log("✅ Mensaje de prueba enviado a tu número.");
+    } catch (error) {
+        console.error("❌ Error enviando mensaje:", error);
+    }
 });
+
 
 
 client.on("message", async msg => {
