@@ -4,6 +4,8 @@ const qrcode = require("qrcode-terminal");
 const express = require("express");
 const app = express();
 
+const OWNER = process.env.BOT_OWNER; // Carga el número desde la variable de entorno
+
 let lastQR = ""; // Almacena el último QR generado
 
 const client = new Client({
@@ -40,17 +42,21 @@ app.get("/qr", (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log("🌍 Abre Railway en /qr para ver el código QR"));
+const PORT = process.env.PORT || 3000; 
+app.listen(PORT, () => console.log(`🌍 QR disponible en http://localhost:${PORT}/qr`));
 
 client.on("ready", async () => {
     console.log("✅ Bot de WhatsApp conectado y listo.");
 
-    // Número en formato internacional sin "+" ni espacios
-    const chatId = "59891398664@c.us";
+    if (!OWNER) {
+        console.error("❌ No se encontró la variable de entorno BOT_OWNER. Asegúrate de configurarla.");
+        return;
+    }
+
     const message = "👋 ¡Hola! Soy tu bot de pruebas en Railway. Ya estoy conectado.";
 
     try {
-        const chat = await client.getChatById(chatId);
+        const chat = await client.getChatById(OWNER);
         await chat.sendMessage(message);
         console.log("✅ Mensaje de prueba enviado a tu número.");
     } catch (error) {
@@ -58,10 +64,10 @@ client.on("ready", async () => {
     }
 });
 
-
-
 client.on("message", async msg => {
-    console.log(`📩 Nuevo mensaje recibido: ${msg.body}`);
+    if (msg.from !== OWNER) return; // Ignorar mensajes que no sean tuyos
+
+    console.log(`📩 Nuevo mensaje de ${msg.from}: ${msg.body}`);
     
     if (msg.body.toLowerCase() === "hola") {
         msg.reply("👋 ¡Hola! Soy un bot de pruebas en Railway.");
