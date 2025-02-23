@@ -83,14 +83,12 @@ client.on("ready", async () => {
 
 // 📩 Evento cuando el bot recibe un mensaje y siempre responde con "Mensaje recibido"
 client.on("message", async msg => {
-    if (msg.from === "status@broadcast") return; // ❌ Ignorar mensajes de estados de WhatsApp
-    if (msg.from !== OWNER) return; // ❌ Ignorar mensajes que no sean de tu número
-
     console.log("📩 Nuevo mensaje recibido:");
     console.log(`🆔 Remitente: ${msg.from}`);
     console.log(`💬 Mensaje: ${msg.body}`);
     console.log(`👥 Tipo de chat: ${msg.isGroupMsg ? "Grupo" : "Privado"}`);
 
+    // 🔥 Responder siempre con "Mensaje recibido"
     try {
         const chat = await msg.getChat();
         await chat.sendMessage("📩 Mensaje recibido.");
@@ -99,6 +97,7 @@ client.on("message", async msg => {
         console.error("❌ Error al responder:", error);
     }
 });
+
 
 
 // Inicializar el bot
